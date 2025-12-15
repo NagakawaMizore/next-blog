@@ -5,12 +5,13 @@
 import './src/env.js';
 
 import { createMDX } from 'fumadocs-mdx/next';
+import { withPayload } from '@payloadcms/next/withPayload';
 
 const withMDX = createMDX();
 
 /** @type {import('next').NextConfig} */
 const config = {
-  reactStrictMode: true,
+  reactStrictMode: false,
   experimental: {
     viewTransition: true,
   },
@@ -22,4 +23,4 @@ const config = {
   ],
 };
 
-export default withMDX(config);
+export default withPayload(withMDX(config));
