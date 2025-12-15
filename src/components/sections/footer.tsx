@@ -1,4 +1,4 @@
-import { baseOptions, linkItems, postsPerPage } from '@/app/layout.config';
+import { baseOptions, linkItems, postsPerPage } from '@/app/(main)/layout.config';
 import { InlineLink } from '@/components/inline-link';
 import { getSortedByDatePosts, getTags } from '@/lib/source';
 import { cn } from '@/lib/utils';

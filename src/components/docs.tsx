@@ -1,5 +1,5 @@
 import type { PageTree } from 'fumadocs-core/server';
-import { cn } from 'fumadocs-ui/components/api';
+import { cn } from '@/lib/utils';
 import {
   type SidebarOptions,
   checkPageTree,
