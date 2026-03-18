@@ -87,31 +87,32 @@ Project structure (excerpt)
 ---------------------------
 
 src/
-  app/
-    (main)/(home)/page.tsx               Home with hero, recent posts, CTA
-    (main)/(home)/posts/[slug]/page.tsx  Post detail with comments and share
-    (main)/(home)/posts/page.tsx         Paginated posts list
-    (main)/(home)/tags/page.tsx          Tag hub
-    (main)/api/search/route.ts           Search index API
-    (main)/rss.xml/route.ts              Atom/RSS feed
-    (payload)/admin/...                  Payload CMS admin
-  lib/                                   Data and utilities (payload-posts,
-                                         metadata, auth-client)
-  server/                                better-auth and Drizzle schema plus
-                                         comment storage
-  emails/                                React Email templates
+├── app/
+│   ├── (main)/(home)/page.tsx               Home with hero, recent posts, CTA
+│   ├── (main)/(home)/posts/[slug]/page.tsx  Post detail with comments and share
+│   ├── (main)/(home)/posts/page.tsx         Paginated posts list
+│   ├── (main)/(home)/tags/page.tsx          Tag hub
+│   ├── (main)/api/search/route.ts           Search index API
+│   ├── (main)/rss.xml/route.ts              Atom/RSS feed
+│   └── (payload)/admin/...                  Payload CMS admin
+├── lib/                                     Data and utilities (payload-posts,
+│                                            metadata, auth-client)
+├── server/                                  better-auth and Drizzle schema plus
+│                                            comment storage
+└── emails/                                  React Email templates
 
 Routes and APIs
 ---------------
 
-/                       Home with hero, latest posts, and CTA.
-/posts                  Paginated posts; /posts/[slug] for detail with rich text,
-                        comments, and share.
-/tags                   Tag cloud with counts.
-/login                  Google or GitHub login entry.
-/admin                  Payload CMS admin.
-/api/search             Search index endpoint (fumadocs search).
-/rss.xml                Atom/RSS feed.
+/                           Home with hero, latest posts, and CTA.
+├── posts                   Paginated posts; /posts/[slug] for detail with rich text,
+│                           comments, and share.
+├── tags                    Tag cloud with counts.
+├── login                   Google or GitHub login entry.
+├── admin                   Payload CMS admin.
+├── api/
+│   └── search              Search index endpoint (fumadocs search).
+└── rss.xml                 Atom/RSS feed.
 
 Developer notes
 ---------------
