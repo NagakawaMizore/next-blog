@@ -15,8 +15,11 @@ export function usePagination({
   totalPages,
   paginationItemsToDisplay,
 }: UsePaginationProps): UsePaginationReturn {
-  const showLeftEllipsis = currentPage - 1 > paginationItemsToDisplay / 2;
+  const shouldTruncate = totalPages > paginationItemsToDisplay;
+  const showLeftEllipsis =
+    shouldTruncate && currentPage - 1 > paginationItemsToDisplay / 2;
   const showRightEllipsis =
+    shouldTruncate &&
     totalPages - currentPage + 1 > paginationItemsToDisplay / 2;
 
   function calculatePaginationRange(): number[] {
