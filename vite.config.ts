@@ -7,9 +7,14 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     setupFiles: './src/test/setup.ts',
-    include: ['**/*.test.tsx', '**/*.test.ts'],
-    alias: {
-      '@': path.resolve(__dirname, './src'),
+    include: ['**/*.{test,spec}.{ts,tsx,js,jsx}'],
+    coverage: {
+      include: [
+        'src/components/**/*.{ts,tsx}',
+        'src/hooks/**/*.{ts,tsx}',
+        'src/lib/**/*.{ts,tsx}',
+      ],
+      exclude: ['src/**/*.test.{ts,tsx,js,jsx}', 'src/test/**'],
     },
   },
   resolve: {

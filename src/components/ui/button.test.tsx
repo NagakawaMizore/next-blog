@@ -14,9 +14,16 @@ describe('Button', () => {
 
   // Test buttons with different variants
   test('renders button with different variants', () => {
-    const variants = ['default', 'destructive', 'outline', 'secondary', 'ghost', 'link'];
+    const variants = [
+      'default',
+      'destructive',
+      'outline',
+      'secondary',
+      'ghost',
+      'link',
+    ] as const;
     variants.forEach((variant) => {
-      render(<Button variant={variant as any}>{variant} Variant</Button>);
+      render(<Button variant={variant}>{variant} Variant</Button>);
       const button = screen.getByText(`${variant} Variant`);
       expect(button).toBeInTheDocument();
     });
@@ -24,9 +31,9 @@ describe('Button', () => {
 
   // Test buttons with different sizes
   test('renders button with different sizes', () => {
-    const sizes = ['default', 'sm', 'lg', 'icon'];
+    const sizes = ['default', 'sm', 'lg', 'icon'] as const;
     sizes.forEach((size) => {
-      render(<Button size={size as any}>{size} Size</Button>);
+      render(<Button size={size}>{size} Size</Button>);
       const button = screen.getByText(`${size} Size`);
       expect(button).toBeInTheDocument();
     });

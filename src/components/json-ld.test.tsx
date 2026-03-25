@@ -46,7 +46,7 @@ describe('json-ld components', () => {
   });
 
   test('returns null when post is not provided', () => {
-    const { container } = render(<PostJsonLd post={null as unknown as any} />);
+    const { container } = render(<PostJsonLd post={null} />);
     expect(container.firstChild).toBeNull();
   });
 

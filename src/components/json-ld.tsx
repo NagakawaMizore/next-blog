@@ -4,7 +4,7 @@ import { baseUrl } from '@/lib/constants';
 import type { BlogPost } from '@/lib/payload-posts';
 import type { BlogPosting, BreadcrumbList, Graph } from 'schema-dts';
 
-export const PostJsonLd = ({ post }: { post: BlogPost }) => {
+export const PostJsonLd = ({ post }: { post: BlogPost | null | undefined }) => {
   if (!post) {
     return null;
   }
