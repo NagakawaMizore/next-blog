@@ -1,0 +1,161 @@
+Next blog
+=========
+
+A full-stack blog built with Next.js 15 and Payload CMS. Ships authentication,
+comments, search, RSS, and an email template out of the box.
+
+Overview
+--------
+
+Frontend uses Next.js App Router with Tailwind and shadcn, plus fumadocs layout
+pieces for navigation, pagination, and search.
+
+Content is managed by Payload CMS (``payload.config.ts``) with support for rich
+text, tags, cover images, and publish states.
+
+Authentication relies on better-auth with Google and GitHub; sessions and
+comments are stored in Postgres through Drizzle ORM.
+
+Comments use ``@fuma-comment``, and the site generates both ``/rss.xml`` feeds
+and ``/api/search`` indexes.
+
+Features
+--------
+
+- **Content Management**: Payload admin handles drafts, published posts, cover
+  images, tags, and scheduled publishing.
+- **Blog Experience**: Includes paginated lists, a tag hub, rich text
+  rendering, and a one-click share button.
+- **Social Interaction**: Supports Google or GitHub login via better-auth and
+  locally stored Fuma Comments.
+- **SEO & Enhancements**: Features RSS feeds, on-the-fly search indexing,
+  automatic Open Graph banners, and sitemaps.
+- **Email System**: Includes a ``newsletter-welcome`` template built with React
+  Email and Tailwind, ready for Resend.
+- **Ops & Tooling**: Ships with ``.env`` validation, local Postgres boot
+  scripts, and unified Drizzle/Payload migration scripts.
+
+Tech Stack
+----------
+
+- **Framework**: Next.js 15 (App Router) with server components and hybrid
+  static/dynamic rendering.
+- **UI**: Tailwind CSS 4 with shadcn and fumadocs-ui for navigation,
+  pagination, sections, and theming.
+- **Content**: Payload CMS for Posts, Users, and Media with Lexical rich text.
+- **Data**: PostgreSQL and Drizzle ORM; auth and comments tables are prefixed
+  ``blog_*``.
+- **Auth**: better-auth with OAuth (Google/GitHub), sessions, and an extra role
+  field.
+- **Email**: Resend with React Email, welcome template styled by Tailwind.
+
+Quickstart
+----------
+
+I recommend using Docker to run Postgres.
+
+Run the following command to start a Postgres instance:
+
+.. code-block:: bash
+
+   docker run -d \
+     --name Next-blog \
+     -e POSTGRES_USER=admin \
+     -e POSTGRES_PASSWORD=YOUR_PASSWORD_HERE \
+     -e POSTGRES_DB=db \
+     -p 5432:5432 \
+     -v "$(pwd)/pgdata:/var/lib/postgresql/data" \
+     postgres:15.1
+
+Then copy ``.env.example`` to ``.env`` and fill in the required environment
+variables for your setup.
+
+.. code-block:: bash
+
+   pnpm install
+   pnpm payload migrate
+   pnpm db:push
+
+Optional:
+
+.. code-block:: bash
+
+   SKIP_ENV_VALIDATION=1 pnpm db:push
+
+Start the development server:
+
+.. code-block:: bash
+
+   pnpm dev
+
+Optional:
+
+.. code-block:: bash
+
+   SKIP_ENV_VALIDATION=1 pnpm dev
+
+Open http://localhost:3000
+
+Core Modules
+------------
+
+- **Content Model**: Defined in ``payload.config.ts`` to manage Posts, Users,
+  and Media with Lexical rich text.
+- **Data Fetching**: Wrapped in ``src/lib/payload-posts.ts`` to handle post
+  queries, tag statistics, and pagination.
+- **Pages & Layout**: Located under ``src/app/(main)``, featuring modular
+  components for the Hero section and post lists.
+- **Auth & Comments**: Managed in ``src/server``, utilizing better-auth with
+  Drizzle ORM and dedicated ``blog_*`` tables.
+- **Search & Feed**: API routes generate the search index and Atom/RSS feeds
+  for content distribution.
+- **Email Templates**: Located in ``emails/``, providing React Email components
+  that dynamically accept post arrays.
+
+Project Structure (excerpt)
+---------------------------
+
+.. code-block:: text
+
+   src/
+   ├── app/
+   │   ├── (main)/(home)/page.tsx               Home with hero, recent posts, CTA
+   │   ├── (main)/(home)/posts/[slug]/page.tsx  Post detail with comments and share
+   │   ├── (main)/(home)/posts/page.tsx         Paginated posts list
+   │   ├── (main)/(home)/tags/page.tsx          Tag hub
+   │   ├── (main)/api/search/route.ts           Search index API
+   │   ├── (main)/rss.xml/route.ts              Atom/RSS feed
+   │   └── (payload)/admin/...                  Payload CMS admin
+   ├── lib/                                     Data and utilities (payload-posts,
+   │                                            metadata, auth-client)
+   ├── server/                                  better-auth and Drizzle schema plus
+   │                                            comment storage
+   └── emails/                                  React Email templates
+
+Routes and APIs
+---------------
+
+.. code-block:: text
+
+   /                           Home with hero, latest posts, and CTA.
+   ├── posts                   Paginated posts; /posts/[slug] for detail with rich text,
+   │                           comments, and share.
+   ├── tags                    Tag cloud with counts.
+   ├── login                   Google or GitHub login entry.
+   ├── admin                   Payload CMS admin.
+   ├── api/
+   │   └── search              Search index endpoint (fumadocs search).
+   └── rss.xml                 Atom/RSS feed.
+
+Developer Notes
+---------------
+
+- Prefer ``./start-database.sh`` to boot Postgres locally; the script warns if
+  the port is in use.
+- Auth and comment tables use the ``blog_`` prefix; keep
+  ``drizzle.config.ts`` ``tablesFilter`` in sync.
+- Payload dev mode pre-fills ``admin@example.com`` / ``admin123`` to speed up
+  admin login.
+- If you only need to browse the UI without real data, set
+  ``SKIP_ENV_VALIDATION=1`` and disable features needing external services;
+  full env is recommended for complete coverage.
