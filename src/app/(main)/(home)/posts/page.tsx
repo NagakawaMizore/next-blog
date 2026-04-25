@@ -58,11 +58,13 @@ export default async function Page(props: {
   const pageIndex = searchParams.page
     ? Number.parseInt(
         Array.isArray(searchParams.page)
-          ? searchParams.page[0] ?? ''
+          ? (searchParams.page[0] ?? '')
           : searchParams.page,
-        10
+        10,
       ) - 1
     : 0;
+
+  if (Number.isNaN(pageIndex)) notFound();
 
   // 获取文章（带分页）
   const { posts, totalDocs, totalPages } = await getPublishedPosts({
@@ -106,7 +108,9 @@ export default async function Page(props: {
           })}
         </div>
       </Section>
-      {totalPages > 1 && <Pagination pageIndex={pageIndex} pageCount={totalPages} />}
+      {totalPages > 1 && (
+        <Pagination pageIndex={pageIndex} pageCount={totalPages} />
+      )}
     </>
   );
 }
@@ -118,12 +122,17 @@ type Props = {
 
 export async function generateMetadata(
   props: Props,
-  parent: ResolvingMetadata
+  parent: ResolvingMetadata,
 ): Promise<Metadata> {
   const searchParams = await props.searchParams;
 
   const pageIndex = searchParams.page
-    ? Number.parseInt(searchParams.page as string, 10)
+    ? Number.parseInt(
+        Array.isArray(searchParams.page)
+          ? (searchParams.page[0] ?? '')
+          : searchParams.page,
+        10,
+      )
     : 1;
 
   const isFirstPage = pageIndex === 1 || !searchParams.page;

@@ -7,7 +7,7 @@ import { Icons } from '@/components/icons/icons';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Comments } from '@fuma-comment/react';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useRef } from 'react';
 import { toast } from 'sonner';
 import { useCopyToClipboard } from 'usehooks-ts';
@@ -42,6 +42,7 @@ export function PostComments({
   slug,
   className,
 }: { slug: string; className?: string }) {
+  const router = useRouter();
   return (
     <Comments
       page={slug}
@@ -49,7 +50,7 @@ export function PostComments({
       auth={{
         type: 'api',
         signIn: () => {
-          redirect('/login');
+          router.push('/login');
         },
       }}
     />
