@@ -55,16 +55,18 @@ export default async function Page(props: {
 }) {
   const searchParams = await props.searchParams;
 
-  const pageIndex = searchParams.page
+  const rawPage = searchParams.page
     ? Number.parseInt(
         Array.isArray(searchParams.page)
           ? (searchParams.page[0] ?? '')
           : searchParams.page,
         10,
-      ) - 1
-    : 0;
+      )
+    : 1;
 
-  if (Number.isNaN(pageIndex)) notFound();
+  if (Number.isNaN(rawPage)) notFound();
+
+  const pageIndex = rawPage - 1;
 
   // 获取文章（带分页）
   const { posts, totalDocs, totalPages } = await getPublishedPosts({
