@@ -165,7 +165,7 @@ export async function generateMetadata(
   const searchParams = await props.searchParams;
 
   const tag = params.slug[0];
-  const pageIndex = searchParams.page
+  const rawPage = searchParams.page
     ? Number.parseInt(
         Array.isArray(searchParams.page)
           ? (searchParams.page[0] ?? '')
@@ -174,18 +174,20 @@ export async function generateMetadata(
       )
     : 1;
 
-  const isFirstPage = pageIndex === 1 || !searchParams.page;
+  if (Number.isNaN(rawPage) || rawPage < 1) notFound();
+
+  const isFirstPage = rawPage === 1 || !searchParams.page;
   const pageTitle = isFirstPage
     ? `${tag} Posts`
-    : `${tag} Posts - Page ${pageIndex}`;
+    : `${tag} Posts - Page ${rawPage}`;
   const canonicalUrl = isFirstPage
     ? `/tags/${tag}`
-    : `/tags/${tag}?page=${pageIndex}`;
+    : `/tags/${tag}?page=${rawPage}`;
 
   return createMetadata({
     title: pageTitle,
     description: `Posts tagged with ${tag}${
-      !isFirstPage ? ` - Page ${pageIndex}` : ''
+      !isFirstPage ? ` - Page ${rawPage}` : ''
     }`,
     openGraph: {
       url: canonicalUrl,
