@@ -70,13 +70,25 @@ Run the following command to start a Postgres instance:
 Then copy ``.env.example`` to ``.env`` and fill in the required environment
 variables for your setup.
 
+For the Docker command above, ``DATABASE_URL`` should look like this:
+
+.. code-block:: bash
+
+   postgresql://admin:YOUR_PASSWORD_HERE@localhost:5432/db
+
 .. code-block:: bash
 
    pnpm install
-   pnpm payload migrate
+   pnpm tsx scripts/create-payload-schema.mts
+   pnpm payload:migrate
    pnpm db:push
 
-Optional:
+The ``scripts/create-payload-schema.mts`` step creates the PostgreSQL
+``payload`` schema required by ``payload.config.ts`` before Payload migrations
+create tables inside it.
+
+If OAuth environment variables are not configured locally, skip validation for
+database push and development startup:
 
 .. code-block:: bash
 
