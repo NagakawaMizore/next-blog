@@ -55,14 +55,18 @@ export default async function Page(props: {
 }) {
   const searchParams = await props.searchParams;
 
-  const pageIndex = searchParams.page
+  const rawPage = searchParams.page
     ? Number.parseInt(
         Array.isArray(searchParams.page)
-          ? searchParams.page[0] ?? ''
+          ? (searchParams.page[0] ?? '')
           : searchParams.page,
-        10
-      ) - 1
-    : 0;
+        10,
+      )
+    : 1;
+
+  if (Number.isNaN(rawPage)) notFound();
+
+  const pageIndex = rawPage - 1;
 
   // 获取文章（带分页）
   const { posts, totalDocs, totalPages } = await getPublishedPosts({
@@ -106,7 +110,9 @@ export default async function Page(props: {
           })}
         </div>
       </Section>
-      {totalPages > 1 && <Pagination pageIndex={pageIndex} pageCount={totalPages} />}
+      {totalPages > 1 && (
+        <Pagination pageIndex={pageIndex} pageCount={totalPages} />
+      )}
     </>
   );
 }
@@ -118,21 +124,28 @@ type Props = {
 
 export async function generateMetadata(
   props: Props,
-  parent: ResolvingMetadata
+  parent: ResolvingMetadata,
 ): Promise<Metadata> {
   const searchParams = await props.searchParams;
 
-  const pageIndex = searchParams.page
-    ? Number.parseInt(searchParams.page as string, 10)
+  const rawPage = searchParams.page
+    ? Number.parseInt(
+        Array.isArray(searchParams.page)
+          ? (searchParams.page[0] ?? '')
+          : searchParams.page,
+        10,
+      )
     : 1;
 
-  const isFirstPage = pageIndex === 1 || !searchParams.page;
-  const pageTitle = isFirstPage ? 'Posts' : `Posts - Page ${pageIndex}`;
-  const canonicalUrl = isFirstPage ? '/posts' : `/posts?page=${pageIndex}`;
+  if (Number.isNaN(rawPage) || rawPage < 1) notFound();
+
+  const isFirstPage = rawPage === 1 || !searchParams.page;
+  const pageTitle = isFirstPage ? 'Posts' : `Posts - Page ${rawPage}`;
+  const canonicalUrl = isFirstPage ? '/posts' : `/posts?page=${rawPage}`;
 
   return createMetadata({
     title: pageTitle,
-    description: `Posts${!isFirstPage ? ` - Page ${pageIndex}` : ''}`,
+    description: `Posts${!isFirstPage ? ` - Page ${rawPage}` : ''}`,
     openGraph: {
       url: canonicalUrl,
     },

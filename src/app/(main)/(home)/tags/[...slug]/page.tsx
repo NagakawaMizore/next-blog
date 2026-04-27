@@ -5,7 +5,7 @@ import { NumberedPagination } from '@/components/numbered-pagination';
 import { PostCard } from '@/components/posts/post-card';
 import { Section } from '@/components/section';
 import { createMetadata } from '@/lib/metadata';
-import { getPostsByTag, getAllTags } from '@/lib/payload-posts';
+import { getAllTags, getPostsByTag } from '@/lib/payload-posts';
 import type { Metadata, ResolvingMetadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 
@@ -57,7 +57,11 @@ const Header = ({
   </Section>
 );
 
-const Pagination = ({ pageIndex, tag, totalPages }: { pageIndex: number; tag: string; totalPages: number }) => {
+const Pagination = ({
+  pageIndex,
+  tag,
+  totalPages,
+}: { pageIndex: number; tag: string; totalPages: number }) => {
   const handlePageChange = async (page: number) => {
     'use server';
     redirect(`/tags/${tag}?page=${page}`);
@@ -85,14 +89,18 @@ export default async function Page(props: {
   const tag = params.slug[0];
   if (!tag) return notFound();
 
-  const pageIndex = searchParams.page
+  const rawPage = searchParams.page
     ? Number.parseInt(
         Array.isArray(searchParams.page)
-          ? searchParams.page[0] ?? ''
+          ? (searchParams.page[0] ?? '')
           : searchParams.page,
-        10
-      ) - 1
-    : 0;
+        10,
+      )
+    : 1;
+
+  if (Number.isNaN(rawPage)) notFound();
+
+  const pageIndex = rawPage - 1;
 
   const { posts, totalDocs, totalPages } = await getPostsByTag(tag, {
     limit: postsPerPage,
@@ -106,7 +114,12 @@ export default async function Page(props: {
 
   return (
     <>
-      <Header tag={tag} startIndex={startIndex} endIndex={endIndex} totalPosts={totalDocs} />
+      <Header
+        tag={tag}
+        startIndex={startIndex}
+        endIndex={endIndex}
+        totalPosts={totalDocs}
+      />
       <Section className='h-full' sectionClassName='flex flex-1'>
         <div className='grid divide-y divide-dashed divide-border/70 text-left dark:divide-border'>
           {posts.map((post) => {
@@ -126,7 +139,9 @@ export default async function Page(props: {
           })}
         </div>
       </Section>
-      {totalPages > 1 && <Pagination pageIndex={pageIndex} tag={tag} totalPages={totalPages} />}
+      {totalPages > 1 && (
+        <Pagination pageIndex={pageIndex} tag={tag} totalPages={totalPages} />
+      )}
       <TagJsonLd tag={tag} />
     </>
   );
@@ -150,27 +165,29 @@ export async function generateMetadata(
   const searchParams = await props.searchParams;
 
   const tag = params.slug[0];
-  const pageIndex = searchParams.page
+  const rawPage = searchParams.page
     ? Number.parseInt(
         Array.isArray(searchParams.page)
-          ? searchParams.page[0] ?? ''
+          ? (searchParams.page[0] ?? '')
           : searchParams.page,
-        10
+        10,
       )
     : 1;
 
-  const isFirstPage = pageIndex === 1 || !searchParams.page;
+  if (Number.isNaN(rawPage) || rawPage < 1) notFound();
+
+  const isFirstPage = rawPage === 1 || !searchParams.page;
   const pageTitle = isFirstPage
     ? `${tag} Posts`
-    : `${tag} Posts - Page ${pageIndex}`;
+    : `${tag} Posts - Page ${rawPage}`;
   const canonicalUrl = isFirstPage
     ? `/tags/${tag}`
-    : `/tags/${tag}?page=${pageIndex}`;
+    : `/tags/${tag}?page=${rawPage}`;
 
   return createMetadata({
     title: pageTitle,
     description: `Posts tagged with ${tag}${
-      !isFirstPage ? ` - Page ${pageIndex}` : ''
+      !isFirstPage ? ` - Page ${rawPage}` : ''
     }`,
     openGraph: {
       url: canonicalUrl,

@@ -1,9 +1,10 @@
+import { env } from '@/env';
 import { baseUrl } from '@/lib/constants';
 import { Resend, type UpdateContactOptions } from 'resend';
 import NewsletterWelcomeEmail from '../../emails/newsletter-welcome';
-import type { getPosts } from './source';
+import type { BlogPost } from './payload-posts';
 
-const resend = new Resend(process.env.RESEND_API_KEY as string);
+const resend = new Resend(env.RESEND_API_KEY);
 
 export async function updateContact({
   email,
@@ -53,18 +54,21 @@ export async function sendWelcomeEmail({
   firstName,
   to,
 }: {
-  posts: ReturnType<typeof getPosts>;
+  posts: BlogPost[];
   firstName: string;
   to: string;
 }) {
-  const EMAIL_FROM = process.env.EMAIL_FROM as string;
-  if (!EMAIL_FROM) throw new Error('Missing EMAIL_FROM environment variable');
+  const EMAIL_FROM = env.EMAIL_FROM;
   if (!firstName || !to) throw new Error('Missing required email fields');
 
   const formattedPosts = posts.map((post) => ({
-    ...post.data,
-    image: `${baseUrl}${post.data.image}`,
-    url: `${baseUrl}${post.url}`,
+    title: post.title,
+    description: post.description,
+    date: post.date,
+    tags: post.tags,
+    image: post.image ? new URL(post.image, baseUrl).href : undefined,
+    author: post.author,
+    url: new URL(post.url, baseUrl).href,
   }));
 
   const { data: res, error } = await resend.emails.send({

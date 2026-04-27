@@ -1,13 +1,14 @@
 'use server';
 
+import { env } from '@/env';
 import { getContact, updateContact } from '@/lib/resend';
 import { ActionError, actionClient } from '@/lib/safe-action';
 import { NewsletterSchema } from '@/lib/validators';
 import { getSession } from '@/server/auth';
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY as string);
-const audienceId = process.env.RESEND_AUDIENCE_ID as string;
+const resend = new Resend(env.RESEND_API_KEY);
+const audienceId = env.RESEND_AUDIENCE_ID;
 
 const splitName = (name = '') => {
   const [firstName, ...lastName] = name.split(' ').filter(Boolean);
