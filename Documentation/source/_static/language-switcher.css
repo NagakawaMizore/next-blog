@@ -1,0 +1,48 @@
+div.admonition {
+  clear: both;
+}
+
+div.language-selection {
+  background: #eeeeee;
+  border: 1px solid #cccccc;
+  float: right;
+  margin-bottom: 1em;
+  padding: 0.5em;
+  position: relative;
+}
+
+div.language-selection:focus {
+  outline: 2px solid #4477aa;
+  outline-offset: 2px;
+}
+
+div.language-selection a {
+  color: #333333;
+  display: block;
+  padding: 0.5em;
+  text-decoration: none;
+}
+
+div.language-selection ul {
+  background: #fafafa;
+  border: 1px solid #cccccc;
+  display: none;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  white-space: nowrap;
+  z-index: 10;
+}
+
+div.language-selection:hover ul,
+div.language-selection:focus-within ul {
+  display: block;
+}
+
+div.language-selection ul li:hover,
+div.language-selection ul li:focus-within {
+  background: #dddddd;
+}

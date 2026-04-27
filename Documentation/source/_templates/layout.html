@@ -1,0 +1,106 @@
+{% extends "!layout.html" %}
+
+{% macro language_href(lang, section) -%}
+  {%- if lang == "en" -%}
+    {%- if section == "index" -%}{{ pathto('index') }}
+    {%- elif section == "introduction" -%}{{ pathto('introduction') }}
+    {%- elif section == "getting-started" -%}{{ pathto('getting-started') }}
+    {%- elif section == "architecture" -%}{{ pathto('architecture/index') }}
+    {%- elif section == "frontend" -%}{{ pathto('frontend/index') }}
+    {%- elif section == "operations" -%}{{ pathto('operations/index') }}
+    {%- elif section == "contributing" -%}{{ pathto('contributing/index') }}
+    {%- elif section == "reference" -%}{{ pathto('reference/index') }}
+    {%- endif -%}
+  {%- elif lang == "zh_CN" -%}
+    {%- if section == "index" -%}{{ pathto('zh_CN/index') }}
+    {%- else -%}{{ pathto('zh_CN/' ~ section) }}
+    {%- endif -%}
+  {%- elif lang == "zh_TW" -%}
+    {%- if section == "index" -%}{{ pathto('zh_TW/index') }}
+    {%- else -%}{{ pathto('zh_TW/' ~ section) }}
+    {%- endif -%}
+  {%- elif lang == "ja" -%}
+    {%- if section == "index" -%}{{ pathto('ja/index') }}
+    {%- else -%}{{ pathto('ja/' ~ section) }}
+    {%- endif -%}
+  {%- endif -%}
+{%- endmacro %}
+
+{% macro language_selection() %}
+  {% if pagename.startswith("zh_CN/") %}
+    {% set current_language = "简体中文" %}
+    {% set normalized = pagename[6:] %}
+  {% elif pagename.startswith("zh_TW/") %}
+    {% set current_language = "繁體中文" %}
+    {% set normalized = pagename[6:] %}
+  {% elif pagename.startswith("ja/") %}
+    {% set current_language = "日本語" %}
+    {% set normalized = pagename[3:] %}
+  {% else %}
+    {% set current_language = "English" %}
+    {% set normalized = pagename %}
+  {% endif %}
+
+  {% if normalized == "index" %}
+    {% set section = "index" %}
+  {% elif normalized == "introduction" %}
+    {% set section = "introduction" %}
+  {% elif normalized == "getting-started" %}
+    {% set section = "getting-started" %}
+  {% elif normalized.startswith("architecture") %}
+    {% set section = "architecture" %}
+  {% elif normalized.startswith("frontend") %}
+    {% set section = "frontend" %}
+  {% elif normalized.startswith("operations") %}
+    {% set section = "operations" %}
+  {% elif normalized.startswith("contributing") %}
+    {% set section = "contributing" %}
+  {% elif normalized.startswith("reference") %}
+    {% set section = "reference" %}
+  {% else %}
+    {% set section = "index" %}
+  {% endif %}
+
+  <div class="language-selection" tabindex="0" aria-label="Select language">
+    {{ current_language }}
+    <ul>
+      <li><a href="{{ language_href('en', section)|e }}">English</a></li>
+      <li><a href="{{ language_href('zh_CN', section)|e }}">简体中文</a></li>
+      <li><a href="{{ language_href('zh_TW', section)|e }}">繁體中文</a></li>
+      <li><a href="{{ language_href('ja', section)|e }}">日本語</a></li>
+    </ul>
+  </div>
+{% endmacro %}
+
+{% block document %}
+  <div class="documentwrapper">
+  {%- if render_sidebar %}
+    <div class="bodywrapper">
+  {%- endif %}
+
+      {%- block relbar_top %}
+        {%- if theme_show_relbar_top|tobool %}
+          <div class="related top">
+            &nbsp;
+          </div>
+        {%- endif %}
+      {% endblock %}
+
+      <div class="body" role="main">
+        {{ language_selection() }}
+        {% block body %} {% endblock %}
+      </div>
+
+      {%- block relbar_bottom %}
+        {%- if theme_show_relbar_bottom|tobool %}
+          <div class="related bottom">
+            &nbsp;
+          </div>
+        {%- endif %}
+      {% endblock %}
+
+  {%- if render_sidebar %}
+    </div>
+  {%- endif %}
+  </div>
+{% endblock %}
