@@ -139,9 +139,9 @@ export async function getAllPostSlugs(): Promise<string[]> {
     },
     limit: 1000,
     depth: 0,
-      select: {
-          tags: true,
-      }
+    select: {
+      slug: true,
+    },
   })
 
   return result.docs.map((doc) => (doc as unknown as PayloadPost).slug)
